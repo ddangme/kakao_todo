@@ -3,11 +3,13 @@ document.addEventListener("DOMContentLoaded", function() {
     const btnAdd = document.getElementById('btn-add');
     const list = document.getElementById('todo-list');
 
+    getTodos();
     btnAdd.addEventListener('click', function() {
        const text = input.value.trim();
 
        if (text !== '') {
            addTodo(text);
+           save();
            input.value = '';
        }
     });
@@ -27,6 +29,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
         deleteButton.addEventListener('click', function() {
             todoElement.remove();
+            save();
         });
 
         checkbox.addEventListener('change', function () {
@@ -35,8 +38,54 @@ document.addEventListener("DOMContentLoaded", function() {
             } else {
                 todoText.classList.remove('todo-complete');
             }
+            save();
         });
 
         list.appendChild(todoElement);
+    }
+
+
+    function save() {
+        const todos = [];
+        const todoElements = document.querySelectorAll('.todo');
+        todoElements.forEach(function(todo) {
+           const text = todo.querySelector('p').innerText;
+           const checkBox = todo.querySelector('.todo-checkbox');
+           let completed;
+           if (checkBox.checked) {
+               completed = true;
+           } else {
+               completed = false;
+           }
+           console.log(completed);
+           todos.push({
+               text: text,
+               completed: completed
+           });
+        });
+
+        localStorage.setItem('todos', JSON.stringify(todos));
+    }
+
+    function getTodos() {
+        const storedData = localStorage.getItem('todos');
+        let todos;
+
+        if (storedData) {
+            todos = JSON.parse(storedData);
+        } else {
+            todos = [];
+        }
+
+        todos.forEach(function(todo) {
+            addTodo(todo.text);
+            console.log(todo.completed);
+            if (todo.completed) {
+                const todoItem = list.lastElementChild;
+                todoItem.classList.add('completed');
+                todoItem.querySelector('.todo-checkbox').checked = true;
+                todoItem.querySelector('.todo-text').classList.add('todo-complete');
+            }
+        })
     }
 });

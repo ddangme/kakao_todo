@@ -59,6 +59,7 @@ h2 {
 
 .todo-complete {
     text-decoration: line-through;
+    text-decoration-color: blue;
 }
 
 #btn-add {
